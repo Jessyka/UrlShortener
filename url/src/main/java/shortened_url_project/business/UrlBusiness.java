@@ -10,9 +10,11 @@ import shortened_url_project.dao.UrlDao;
 import shortened_url_project.model.UrlModel;
 
 public class UrlBusiness {
+
 	UrlModel urlmodel;
 	UrlDao urlDao;
-	
+	String static final urlbase = "http://shortenedurl.com/";
+
 	public UrlBusiness() {
 		urlDao = new UrlDao();
 	}
@@ -21,12 +23,16 @@ public class UrlBusiness {
 		urlDao = dao; 
 	}
 	
+	//Get UrlModel by shortened Url
 	public UrlModel getUrlModelByShortenedUrl(String url) {
 		if(urlValidator(url)) {
 			try {
+				String urlId = url.replace(urlbase,"");
+
 				urlDao.openCurrentSession();
-				UrlModel urlmodel = urlDao.getByShortened(url);
+				UrlModel urlmodel = urlDao.getByShortened(Long.parseInt(urlId));
 				urlDao.closeCurrentSession();
+
 				return urlmodel;
 			}catch (NoResultException nre){
 				return null;
@@ -35,6 +41,7 @@ public class UrlBusiness {
 			return null;
 	}
 	
+	///Get UrlModel by original Url
 	public UrlModel getUrlModelByOriginalUrl(String url) {
 		
 		if(urlValidator(url)) {
@@ -52,11 +59,13 @@ public class UrlBusiness {
 			return urlmodel;
 	}
 
+	//Insert new UrlModel
 	public UrlModel createNewShortenedUrl(String originalurl) {		
 		if(urlValidator(originalurl)) {
 			
 			UrlModel auxiliarModel = new UrlModel(); 
 			
+			//Validar se a URL já existe no banco de dados.
 			try {
 				urlDao.openCurrentSession();
 				auxiliarModel = urlDao.getByOriginalUrl(originalurl);
@@ -71,8 +80,7 @@ public class UrlBusiness {
 				
 				//Create new Url record.
 				urlmodel = new UrlModel();		
-				urlmodel.setOriginalUrl(originalurl);
-				urlmodel.setShortenedUrl(newShortenedUrlCreator());			
+				urlmodel.setOriginalUrl(originalurl);		
 				urlmodel.setDate(new Date());			
 				
 				urlDao.openCurrentSessionwithTransaction();
@@ -85,21 +93,6 @@ public class UrlBusiness {
 			return null;
 		}else
 			return null;
-	}
-	
-	private String newShortenedUrlCreator() {
-		
-		String urlBase = new String();
-		Random r = new Random();
-		int low = 1;
-		int high = 1000;
-	
-		urlBase = "http://shortenedurl.com/";
-		long result = r.nextInt(high-low) + low;				
-		
-		urlBase = urlBase + Long.toString(result);
-		
-		return urlBase;
 	}
 	
 	private boolean urlValidator(String urlString) {

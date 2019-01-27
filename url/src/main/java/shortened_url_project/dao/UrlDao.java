@@ -82,12 +82,12 @@ public class UrlDao implements DaoInterface<UrlModel, String> {
 		return urlmodel;
 	}
 	
-	public UrlModel getByShortened(String url) {
+	public UrlModel getByShortened(long id) {
 		
-		String jpql = "select a from UrlModel a where a.shortened_url = :url";
+		String jpql = "select a from UrlModel a where a.id = :id";
 		
 		Query<UrlModel> query = getCurrentSession().createQuery(jpql);
-		query.setParameter("url", url);
+		query.setParameter("id", id);
 		
 		UrlModel urlmodel = (UrlModel) query.setMaxResults(1).getSingleResult();
 		return urlmodel;

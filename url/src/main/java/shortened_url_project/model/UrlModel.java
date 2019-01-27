@@ -19,7 +19,7 @@ public class UrlModel {
 	@Column(name = "url")
 	private String original_url;
 	
-	@Column(name = "shortened_url")
+	//@Column(name = "shortened_url")
 	private String shortened_url;
 	
 	@Column(name = "date_created")
@@ -35,7 +35,9 @@ public class UrlModel {
 	}
 	
 	public String getShortnerUrl() {
-		return shortened_url;
+		if(id == 0)
+			return "";
+		return "http://shortenedurl.com/" + id;
 	}
 	
 	public Date getDateCreated() {
@@ -44,10 +46,6 @@ public class UrlModel {
 	
 	public void setOriginalUrl(String url) {
 		original_url = url;
-	}
-	
-	public void setShortenedUrl(String url) {
-		shortened_url = url;
 	}
 	
 	public void setDate(Date date) {
@@ -67,7 +65,7 @@ public class UrlModel {
 		
 		UrlModel urlObject = (UrlModel) object;
 		
-		if(this.original_url == urlObject.getOriginalUrl())
+		if(this.original_url.equals(urlObject.getOriginalUrl()))
 			return true;
 		
 		return false;
